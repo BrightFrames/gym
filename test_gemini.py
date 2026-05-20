@@ -9,7 +9,7 @@ print(f'Key loaded: {bool(key)}')
 genai.configure(api_key=key)
 
 try:
-    model = genai.GenerativeModel('gemini-1.5-pro')
+    model = genai.GenerativeModel('gemini-2.5-flash')
     generation_config = genai.GenerationConfig(response_mime_type='application/json')
     response = model.generate_content('Reply with JSON {"test": "success"}', generation_config=generation_config)
     print("Success:", response.text)
