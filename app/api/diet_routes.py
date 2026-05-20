@@ -39,7 +39,7 @@ def generate_diet_plan():
 
     if result.get("success"):
         new_plan = DietPlan(
-            client_id=g.client.id,
+            client_id=user.client_id,
             author=user,
             generated_plan=result['plan']
         )

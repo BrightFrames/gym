@@ -21,15 +21,15 @@ class UserRegistrationSchema(BaseModel):
 
     # --- User Profile Fields ---
     name: str = Field(min_length=2, max_length=100, description="User's full name")
-    age: int = Field(gt=13, lt=100, description="User's age, must be between 14 and 99")
-    gender: Literal['Male', 'Female', 'Other']
-    weight_kg: float = Field(gt=20, description="Weight in kilograms, must be greater than 20")
-    height_cm: float = Field(gt=100, description="Height in centimeters, must be greater than 100")
-    fitness_goals: str = Field(min_length=5, max_length=200)
-    workouts_per_week: str
-    workout_duration: int = Field(gt=0, description="Duration in minutes.")
-    sleep_hours: float
-    stress_level: Literal['low', 'medium', 'high']
+    age: Optional[int] = Field(None, gt=13, lt=100, description="User's age, must be between 14 and 99")
+    gender: Optional[Literal['Male', 'Female', 'Other']] = None
+    weight_kg: Optional[float] = Field(None, gt=20, description="Weight in kilograms, must be greater than 20")
+    height_cm: Optional[float] = Field(None, gt=100, description="Height in centimeters, must be greater than 100")
+    fitness_goals: Optional[str] = Field(None, min_length=5, max_length=200)
+    workouts_per_week: Optional[str] = None
+    workout_duration: Optional[int] = Field(None, gt=0, description="Duration in minutes.")
+    sleep_hours: Optional[float] = None
+    stress_level: Optional[Literal['low', 'medium', 'high']] = None
     
     # --- Optional Fields ---
     disliked_foods: Optional[str] = None

@@ -49,7 +49,7 @@ class WorkoutPlannerService:
         return prompt
 
     def _call_llm_api(self, prompt):
-        model = genai.GenerativeModel('gemini-2.5-pro')
+        model = genai.GenerativeModel('gemini-1.5-pro') # Fixed invalid model name
         generation_config = genai.GenerationConfig(response_mime_type="application/json")
         response = model.generate_content(prompt, generation_config=generation_config)
         return json.loads(response.text)

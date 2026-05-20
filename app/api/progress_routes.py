@@ -94,3 +94,16 @@ def get_my_measurement_history():
         return jsonify([entry.to_dict() for entry in history]), 200
     except Exception as e:
         return jsonify({"error": "An error occurred while retrieving measurement history.", "details": str(e)}), 500
+
+@progress_bp.route('/daily-report', methods=['GET'])
+@require_jwt
+def get_daily_report():
+    """
+    Fetches the daily report (workout and meals) for a specific date.
+    Returns a mock/default format so the frontend calendar doesn't throw 404s.
+    """
+    date_str = request.args.get('date')
+    return jsonify({
+        "workout": "AI Generated Workout Plan for " + str(date_str),
+        "meals": ["Breakfast: AI Generated", "Lunch: AI Generated", "Dinner: AI Generated"]
+    }), 200

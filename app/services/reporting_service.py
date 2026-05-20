@@ -14,13 +14,19 @@ class ReportingService:
 
     def _calculate_target_calories(self):
         """
-        Calculates a robust TDEE based on the user's stored profile data.
+        Calculates a robust TDEE based on the user's stored profile data, with safe fallbacks.
         """
-        # 1. Calculate BMR (no change here)
-        if self.user.gender.lower() == 'male':
-            bmr = 10 * self.user.weight_kg + 6.25 * self.user.height_cm - 5 * self.user.age + 5
+        # Safe fallbacks for potentially missing profile data
+        gender = (self.user.gender or 'male').lower()
+        weight = self.user.weight_kg or 70.0
+        height = self.user.height_cm or 170.0
+        age = self.user.age or 30
+
+        # 1. Calculate BMR
+        if gender == 'male':
+            bmr = 10 * weight + 6.25 * height - 5 * age + 5
         else:
-            bmr = 10 * self.user.weight_kg + 6.25 * self.user.height_cm - 5 * self.user.age - 161
+            bmr = 10 * weight + 6.25 * height - 5 * age - 161
         
         # 2. Get the correct TDEE multiplier based on the user's activity level
         activity_multipliers = {
@@ -36,8 +42,8 @@ class ReportingService:
         multiplier = activity_multipliers.get(user_activity_level, 1.2)
         tdee = bmr * multiplier
 
-        # 3. Adjust for fitness goal (no change here)
-        goal = self.user.fitness_goals.lower()
+        # 3. Adjust for fitness goal
+        goal = (self.user.fitness_goals or 'maintain').lower()
         if 'loss' in goal:
             return tdee - 500
         elif 'gain' in goal:

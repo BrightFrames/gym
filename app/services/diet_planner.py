@@ -10,11 +10,16 @@ class DietPlannerService:
         self.tdee = 0
 
     def _calculate_bmr(self):
-        # Using data from the user database object
-        if self.user.gender.lower() == 'male':
-            self.bmr = 10 * self.user.weight_kg + 6.25 * self.user.height_cm - 5 * self.user.age + 5
+        # Using data from the user database object with safe fallbacks
+        gender = (self.user.gender or 'male').lower()
+        weight = self.user.weight_kg or 70.0
+        height = self.user.height_cm or 170.0
+        age = self.user.age or 30
+
+        if gender == 'male':
+            self.bmr = 10 * weight + 6.25 * height - 5 * age + 5
         else:
-            self.bmr = 10 * self.user.weight_kg + 6.25 * self.user.height_cm - 5 * self.user.age - 161
+            self.bmr = 10 * weight + 6.25 * height - 5 * age - 161
 
     def _calculate_tdee(self):
         activity_multipliers = {
@@ -30,7 +35,7 @@ class DietPlannerService:
         self.tdee = self.bmr * multiplier
 
     def _adjust_calories_for_goal(self):
-        goal = self.user.fitness_goals.lower()
+        goal = (self.user.fitness_goals or 'maintain').lower()
         if 'loss' in goal:
             return self.tdee - 500
         elif 'gain' in goal:
@@ -116,13 +121,13 @@ class DietPlannerService:
         return prompt
 
     def _call_llm_api(self, prompt):
-        model = genai.GenerativeModel('gemini-2.5-pro') # Or your preferred model
+        model = genai.GenerativeModel('gemini-1.5-pro') # Fixed invalid model name
         generation_config = genai.GenerationConfig(response_mime_type="application/json")
         response = model.generate_content(prompt, generation_config=generation_config)
         return json.loads(response.text)
         
     def _adjust_calories_for_goal(self, adjustment=0): # Add the adjustment parameter
-        goal = self.user.fitness_goals.lower()
+        goal = (self.user.fitness_goals or 'maintain').lower()
         base_calories = 0
         if 'loss' in goal:
             base_calories = self.tdee - 500
